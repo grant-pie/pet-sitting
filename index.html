@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grant Pieterse - Pet Sitter</title>
-    
+      <!-- Google Captcha -->
+
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Le0qXIrAAAAAH-k--pQk84X5d2vexAc7Qr0IfTE"></script>
+
     <!-- Bootstrap 5 CSS -->  
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     
@@ -255,7 +258,11 @@
                     <div class="col-lg-6 order-lg-1 ">
                         <div class="contact-form">
                             <h4 class="mb-4">Send Me a Message</h4>
-                            <form id="contactForm">
+                            <form 
+                            id="contactForm"
+                                action="#"
+                            method="POST"
+                            >
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="firstName" class="form-label">First Name</label>
@@ -299,7 +306,16 @@
                                     <div class="error-message text-danger small mt-1" id="datesError" style="display: none;"></div>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary btn-lg w-100">Send Message</button>
+                                <button id="submit" class="btn btn-secondary" type="submit">
+
+                                    <span id="btnText">Submit</span>
+
+                                    <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2" role="status" style="display: none;"></span>
+
+                                </button>
+                                
+                                
+                                <div id="response" class="mt-4"></div>
                             </form>
                         </div>
                     </div>
@@ -487,7 +503,7 @@
             // Get form data
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
-            console.log('Form data:', data);
+
             
             // Validate all fields
             let isFormValid = true;
@@ -503,12 +519,72 @@
                 return;
             }
             
-            // Here you would typically send the data to your server
-            // For now, we'll just show a success message
-            alert('Thank you for your message! I\'ll get back to you within 24 hours.');
+            //send email
+            const responseDiv = document.getElementById('response');
+            const submitBtn = document.getElementById('submit');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+
+            // Show the spinner and hide the button text
+            btnSpinner.style.display = 'inline-block';
+            btnText.style.display = 'none';
             
-            // Reset form and clear any error states
-            this.reset();
+            const payload = {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                phone: data.phone,
+                petType: data.petType,
+                dates: data.dates,
+            };
+            const form = this;
+ 
+            try {
+
+                grecaptcha.enterprise.ready(async () => {
+                    console.log({pl: payload})
+                    // Execute reCAPTCHA with your site key
+                    const token = await grecaptcha.enterprise.execute('6Le0qXIrAAAAAH-k--pQk84X5d2vexAc7Qr0IfTE', {action: 'MESSAGE'});
+                    payload.recaptchaToken = token;
+                    // Gather form data
+                    const formData = new FormData(this);
+                    const dataObjects = Object.fromEntries(formData);
+                    console.log('Form data:', dataObjects);
+                    
+                    
+                    const res = await fetch('http://10.0.0.5:3001/mail/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const data = await res.json();
+                    
+                    if (res.ok) {
+                        responseDiv.innerHTML = '<p class="success">Message sent successfully!</p>';
+                       
+                        form.reset();
+                    } else {
+                        let errorMessage = data.message || 'Failed to send email.';
+                        if (data.error && data.message) {
+                            errorMessage = `${data.error}: ${data.message}`;
+                        }
+                        responseDiv.innerHTML = `<p class="error">${errorMessage}</p>`;
+                    }
+                })
+                
+            } catch (error) {
+                console.error('Error:', error);
+                responseDiv.innerHTML = 
+                    '<p class="error">An unexpected error occurred. Please try again later.</p>';
+            } finally {
+                // Hide the spinner and show the button text
+                btnSpinner.style.display = 'none';
+                btnText.style.display = 'inline';
+            }
+
             ['firstName', 'lastName', 'email', 'phone', 'petType'].forEach(fieldId => {
                 hideError(fieldId);
             });
