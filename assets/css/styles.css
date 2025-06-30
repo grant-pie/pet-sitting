@@ -14,7 +14,7 @@
 
 .hero-section {
     height: 100vh;
-    background-image: url('../images/home.jpg');
+    background-image: url('../images/home_mobile.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -25,6 +25,13 @@
     /* Optional: Add overlay for better text readability */
     background-color: rgba(0, 0, 0, 0.4);
     background-blend-mode: multiply;
+}
+
+/* Medium devices and larger (768px and up) */
+@media (min-width: 768px) {
+    .hero-section {
+        background-image: url('../images/home.jpg');
+    }
 }
 
 .hero-content {
