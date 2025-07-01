@@ -544,7 +544,7 @@
                 grecaptcha.enterprise.ready(async () => {
                     console.log({pl: payload})
                     // Execute reCAPTCHA with your site key
-                    const token = await grecaptcha.enterprise.execute('6LdW63MrAAAAAJ924-1-B2WQsCteakSBvKN0xDk1', {action: 'MESSAGE'});
+                    const token = await grecaptcha.enterprise.execute('6LdW63MrAAAAAJ924-1-B2WQsCteakSBvKN0xDk1', {action: 'contact_form'});
                     payload.recaptchaToken = token;
                     // Gather form data
                     const formData = new FormData(this);
