@@ -6,7 +6,7 @@
     <title>Grant Pieterse - Pet Sitter</title>
       <!-- Google Captcha -->
 
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Le0qXIrAAAAAH-k--pQk84X5d2vexAc7Qr0IfTE"></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdW63MrAAAAAJ924-1-B2WQsCteakSBvKN0xDk1"></script>
 
     <!-- Bootstrap 5 CSS -->  
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -544,7 +544,7 @@
                 grecaptcha.enterprise.ready(async () => {
                     console.log({pl: payload})
                     // Execute reCAPTCHA with your site key
-                    const token = await grecaptcha.enterprise.execute('6Le0qXIrAAAAAH-k--pQk84X5d2vexAc7Qr0IfTE', {action: 'MESSAGE'});
+                    const token = await grecaptcha.enterprise.execute('6LdW63MrAAAAAJ924-1-B2WQsCteakSBvKN0xDk1', {action: 'MESSAGE'});
                     payload.recaptchaToken = token;
                     // Gather form data
                     const formData = new FormData(this);
